@@ -14,11 +14,12 @@ if __name__=='__main__':
 		else:
 			if ans == 'r':
 				config=input('List config options, comma separated (Vmax, n, itr): ')
-				print(config)
 				Vmax,n,itr=config.strip('()').split(',')
 				Vmax = int(Vmax)
 				n = int(n)
 				itr = int(itr)
+				estimate=(2**3)*(Vmax**3)/(1000000*60)
+				print('Time estimate: {} minutes'.format(estimate))
 				t0 = time.perf_counter()
 				x,y,z = man.space(Vmax,n,itr)
 				t = man.display(x,y,z)-t0
