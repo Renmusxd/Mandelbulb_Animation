@@ -2,6 +2,7 @@ from mandel import Mandel as man
 import time 
 import matplotlib.pyplot as plt 
 from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
 
 def save(listarrays):
     '''For large arrays, save to .txt so dont need to recalc. Takes in list of arrays'''
@@ -38,12 +39,12 @@ def display(x,y,z,cm):
     """Display 3D set of coordinates"""
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
-    ax.scatter(x,y,z, c=cm, marker='o')
+    ax.scatter(x,y,z, c=cm, marker='o',cmap='jet')
     ax.grid(False)
     ax.set_xticks([])
     ax.set_yticks([])
     ax.set_zticks([])
-    plt.axis('off')
+    # plt.axis('off')
 
     fig.show()
     t=time.perf_counter()
@@ -76,7 +77,7 @@ if __name__=='__main__':
 				# Also perf counter
 				t0 = time.perf_counter()
 				# get space and color map index using mandelbulb object
-				bulb = man(pts = pts)
+				bulb = man(itr = 250,pts = pts)
 				x,y,z,cm = bulb.space()
 				# display space
 				t = display(x,y,z,cm)-t0
@@ -99,3 +100,6 @@ if __name__=='__main__':
 
 			else:
 				print('Try again')
+
+
+

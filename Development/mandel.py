@@ -16,7 +16,7 @@ class Mandel(object):
         '''Determines if a point with 3 coordinates is in the mandelbulb set.'''
         # start 'orbit' from <0,0,0>
         x, y, z = 0.0, 0.0, 0.0
-        counter=0 # count iterations
+        # count iterations
         for i in range(self.itr): #iteration threshold
             # White and Nylander's formula for the nth power (wikipedia)
             # first move to spherical coordinates to apply recursion formula
@@ -28,17 +28,8 @@ class Mandel(object):
             y = r**self.n * np.sin(theta*self.n) * np.sin(phi*self.n) + Cy
             z = r**self.n * np.cos(theta*self.n) + Cz
             if x**2 + y**2 + z**2 > self.vmax: # vector length threshold
-                return(counter)
-            else:
-                counter = counter + 1
+                return(i)
         return(0)
-
-    @jit
-    def sphere(self,Cx,Cy,Cz):
-        if (Cx**2 + Cy**2 + Cz**2 >= self.vmax):
-            return(False)
-        else:
-            return(True)
 
     @jit
     def space(self):
