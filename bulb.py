@@ -1,14 +1,12 @@
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 from numba import jit
-from copy import copy
 import scipy.misc
 from tqdm import tqdm
 import os
 
 class Bulb(object):
-    '''Generate 2D array with colormap values for making png images of the 3D Mandelbulb. Save'''
+    '''Generate 2D array with colormap values for making png images of the 3D Mandelbulb. Save array as png to frames folder.'''
     def __init__(self,degree=8, observer_position=np.array([0., 0., 3.]), max_steps=32, iterations=32, bailout=2**20, min_distance=5e-4, zoom=0, power=0.2, width=500, height=500, x_size=500, y_size=500, span=[1.2, 1.2], center=[0, 0],counter=0):
         '''Init config variables for bulb object'''
         self.itr = iterations # Constraint: number iterations before we decide a point under recursion formula is bounded or not by bail, i.e in set.
