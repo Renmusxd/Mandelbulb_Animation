@@ -26,7 +26,7 @@ def elipse(pts = 360):
 	theta = np.linspace(0, 2 * np.pi, pts)
 	# using equation for elipse in polar
 	a = 4.0 # major axis
-	b = 3.0 # minor axis
+	b = 4.0 # minor axis
 	radius = (a * b)/np.sqrt(b**2 * np.cos(theta)**2 + a**2 * np.sin(theta)**2)
 	x = np.zeros_like(theta) # do this in polar, fix elipse to y,z plane
 	y = radius * np.sin(theta)
@@ -47,12 +47,15 @@ def views(pts = 1000):
 	return(x,y,z)
 
 if __name__=='__main__':
-	x,y,z = views()
+	x,y,z = elipse()
 	print(y.size == z.size , y.shape == z.shape)
 	fig = plt.figure()
 	ax = fig.gca(projection = '3d')
 	ax.plot(x,y,z, color = 'r',label = 'Path0')
 	ax.legend()
+	ax.set_xlim(-5,5)
+	ax.set_ylim(-5,5)
+	ax.set_zlim(-5,5)
 	fig.show()
 	input(' :: Press <Enter> to continue :: ')
 

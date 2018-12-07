@@ -6,11 +6,13 @@ import os
 
 class Bulb(object):
 	'''Generate individual images of the Mandelbulb set with ray tracing.'''
-	def __init__(self,degree=8, observer_position=np.array([0., 0., 3.]), max_steps=32, iterations=32, bailout=2**20, min_distance=5e-4, zoom=0, power=0.2, imsize = 500, x_size=500, y_size=500, span=[1.2, 1.2], center=[0, 0], counter=0, cm='fiery'):
+	def __init__(self,degree=8, observer_position=np.array([0., 0., 3.]), max_steps=32, iterations=32, bailout=2**20, min_distance=5e-4, zoom=0, power=0.2, imsize = 500, x_size=500, y_size=500, span=[1.2, 1.2], center=[0, 0], counter=0, cm='gray', color_map =[1,0,1,0,1,0], grad=False):
 		'''Initializes config variables for bulb object'''
+		self.cm = cm # choose the colormap for the resultant bulb from in colordict presets
 		self.itr = iterations # Constraint: number iterations before we decide a point under recursion formula is bounded or not by bail, i.e in set.
 		self.deg = degree  # the power n used in the recursive formula V --> V^n + C any degree >= 0 works, but smaller degree uses more iterations
 		self.span = span # another control of zoom of picture, numerator term
+		self.grad = grad # colorgradient
 		self.maxs = max_steps
 		self.mind = min_distance # minimum distance from observer position that is considered a 
 		self.bail = bailout # Constraint: points within the bulb set need to stay within bailout, a radius, over 32 iterations.
@@ -23,22 +25,29 @@ class Bulb(object):
 		self.height = imsize # image height and resolution (always a square)
 		self.center = center # sets bulb position in x,y plane of the image
 		self.counter = counter # index of generated images
-		self.colormap = cm # choose the colormap for the resultant bulb from in colordict presets
-		self.colordict = {'fiery':[1/3,150,1,0,1/6,0],'blue':[1/6,0,0,20,1/3,150],'xmas':[1/3,150,-1/3,255,0,55],'70s':[1,0,-1,255,-1,255],'gray':[1,0,1,0,1,0],'teal':[0,0,1,0,1,0]}
+		self.color_map = color_map
+		self.colordict = {'fiery':[1/3,150,1,0,1/6,0],'blue':[1/6,0,0,20,1,0],'xmas':[-1/1.5,160,1,0,0.2,0],'70s':[.5,255/2,-1,255,-1,255],'gray':[1,0,1,0,1,0],'teal':[0,0,1,0,1,0],'poison':[1,0,0,30,0,200],'misc':[-1/1.5,150,1,0,0.5,70]}
 		
 	def paint(self):
 		'''Generates the pal colormap values to be used in scipy.misc.toimage. Defaults are stored in self.colordict, and are called by their names in new instance'''
-		try:
-			self.colormap = str(self.colormap)
-			assert self.colormap in self.colordict
-		except Exception:
-			print('''Invalid colormap, available choices: \n \n {}'''.format(self.colordict))
-		else:
-			m1, b1, m2, b2, m3, b3 = self.colordict[self.colormap]
+		if self.grad:
+			m1, b1, m2, b2, m3, b3 = self.color_map
 			triplet = [[0,0,0]]
 			for i in range(1,255):
 				triplet.append([m1*i+b1 , m2*i+b2 , m3*i+b3])
 			return(triplet)
+		else:
+			try:
+				self.cm = str(self.cm)
+				assert self.cm in self.colordict
+			except Exception:
+				print('''Invalid colormap, available choices: \n \n {}'''.format(self.colordict))
+			else:
+				m1, b1, m2, b2, m3, b3 = self.colordict[self.cm]
+				triplet = [[0,0,0]]
+				for i in range(1,255):
+					triplet.append([m1*i+b1 , m2*i+b2 , m3*i+b3])
+				return(triplet)
 
 	def get_plane_points(self):
 		'''Makes a blank 2D canvas, parrallel to the screen, onto which will project the image of the mandelbulb, 
