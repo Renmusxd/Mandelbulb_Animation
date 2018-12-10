@@ -1,0 +1,18 @@
+READ ME.txt
+
+Before you can run this program, there is additional software that you must install.
+This program is intended to be run on a Linux operating system. 
+
+Enter terminal.
+Type 'pip install tqdm' or 'pip3 install tqdm' if the first one doesn't work. 
+Type 'pip install scipy'.
+If you do not have pip installed, you might want to reinstall the latest version of Python from https://www.python.org/downloads/ as pip will then be installed on your OS. 
+For more information on pip, go to https://packaging.python.org/tutorials/installing-packages/.
+
+Now all of the required packages should be installed.
+
+The only other software that this program uses is ffmpeg, which is non-python software that allows us to create an mp4 movie. 
+If you intend to run this program on a Linux/Raspberry Pi system, there is a chance that ffmpeg is already installed.
+Otherwise, you can install ffmpeg from https://www.ffmpeg.org/.
+
+This is all that should be needed to get this program running. We hope you enjoy!

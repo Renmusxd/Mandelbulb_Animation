@@ -77,8 +77,13 @@ class Cinematic(object):
 
 	def gradient(self, fmax=10):
 		""" Makes a gradient between the fiery and blue colormaps"""
+		# bulb = Bulb()
+		# maps = bulb.colordict()
 		fiery = [1/3,150,1,0,1/6,0]
 		blue = [1/6,0,0,20,1,0]
+		# fiery = maps['fiery']
+		# print(fiery)
+		# blue = maps['blue']
 		index = []
 		for i in range(fmax):
 			map_increment = list(range(6))
@@ -103,6 +108,6 @@ class Cinematic(object):
 		return(path)
 
 if __name__=='__main__':
-	movie = Cinematic(res = 100, movie_length = 2, grad = True)
+	movie = Cinematic(res = 500, movie_length = 2, fps= 10, grad = True)
 	movie.stitch()
 	

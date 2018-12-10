@@ -138,14 +138,16 @@ class Bulb(object):
 		directions = self.get_directions(plane_points) # get directions to plane points from origin
 		image = self.trace(directions)
 		image = image.reshape(self.width, self.height)
+		print(image)
 		arraymax = np.amax(image)
 		#rescale colorvalues so picture is brighter. Array maximum * 1//arraymax is 1 so it will be white
-		image = (1//arraymax)*image 
-		scipy.misc.toimage(image, cmin = 0.0, cmax = 1,mode = 'L', pal = self.paint() ).save(os.getcwd() + '/frames/frame{}.png'.format(self.counter)) # save in the frames folder
+		image = (1//arraymax)*image
+		print(image)
+		scipy.misc.toimage(image, pal = self.paint() ).save(os.getcwd() + '/frames/frame{}.png'.format(self.counter)) # save in the frames folder
 		#note, used os to get current working directory for wherever script is used
 
 if __name__=='__main__':
-	bulb = Bulb( cm = '70s',imsize = 1000)
+	bulb = Bulb( cm = '70s',imsize = 20)
 	bulb.bulb_image()
 
 
