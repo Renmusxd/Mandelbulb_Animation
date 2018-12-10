@@ -24,7 +24,7 @@ class Bulb(object):
 		self.center = center # sets bulb position in x,y plane of the image
 		self.counter = counter # index of generated images
 		self.colormap = cm # choose the colormap for the resultant bulb from in colordict presets
-		self.colordict = {'fiery':[1/3,150,1,0,1/6,0],'blue':[1/6,0,0,20,1/3,150],'xmas':[1/3,150,-1/3,255,0,55],'70s':[1,0,-1,255,-1,255],'gray':[1,0,1,0,1,0],'teal':[0,0,1,0,1,0]}
+		self.colordict = {'fiery':[1/3,150,1,0,1/6,0],'blue':[1/6,0,0,20,1/3,150],'xmas':[-1/1.5,200,1/2,0,1/6,0],'70s':[1,0,-1,255,-1,255],'gray':[1,0,1,0,1,0],'teal':[0,0,1,0,1,0], 'blue-purp':[1,0,0,30,0,200]}
 		
 	def paint(self):
 		'''Generates the pal colormap values to be used in scipy.misc.toimage. Defaults are stored in self.colordict, and are called by their names in new instance'''
@@ -32,7 +32,7 @@ class Bulb(object):
 			self.colormap = str(self.colormap)
 			assert self.colormap in self.colordict
 		except Exception:
-			print('''Invalid colormap, available choices: \n \n {}'''.format(self.colordict))
+			print('''\nInvalid colormap, available choices: \n \n {}'''.format(self.colordict))
 		else:
 			m1, b1, m2, b2, m3, b3 = self.colordict[self.colormap]
 			triplet = [[0,0,0]]
@@ -136,8 +136,9 @@ class Bulb(object):
 		#note, used os to get current working directory for wherever script is used
 
 if __name__=='__main__':
-	bulb = Bulb( cm = '70s', counter = 3)
+	bulb = Bulb( cm = 'xmas', imsize= 500, min_distance=7e-4, observer_position=np.array([1,2,-3]), counter = 3)
 	bulb.bulb_image()
+
 
 
 

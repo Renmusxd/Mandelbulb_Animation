@@ -6,7 +6,7 @@ import numpy as np
 
 class Cinematic(object):
 	'''Handles the making of movies from generated bulb frames.'''
-	def __init__(self,fps = 20, movie_length = 2, deg_lims = [2,8], obpos = np.array([0 , 0 , 3.]), res = 500 ,movie_name = 'Mandlemoves' , offset = 0):
+	def __init__(self,fps = 20, movie_length = 2, deg_lims = [2,8], obpos = np.array([0 , 0 , 3.]), res = 500 ,movie_name = 'Mandlemoves' , offset = 0, ccm='fiery'):
 		self.fps = fps # change framerate
 		self.off = offset # give frame naming index an offset so don't rewrite good frames
 		self.res = res # movie resolution
@@ -14,6 +14,7 @@ class Cinematic(object):
 		self.obpos = obpos # observer position
 		self.mov_len = movie_length # movie length in seconds
 		self.deg_star, self.deg_end = deg_lims # limits on power of recursive formula
+		self.ccm = ccm
 
 	def stitch(self):
 		'''Uses the ffmpeg terminal command to stitch together the png frames into a .mp4 movie file with given fps. Offset counter to adjust for cache'''
@@ -38,10 +39,10 @@ class Cinematic(object):
 		degrees = np.linspace(self.deg_star, self.deg_end, fmax) # apply number of frames
 		# make a new  set of frames and dont overwrite frames you already have
 		for i in tqdm(range(degrees.size), desc = ' :: Generating Frames :: '):
-			bulb = Bulb(observer_position = self.obpos, degree = degrees[i], imsize = self.res, counter = i + self.off) 
+			bulb = Bulb(observer_position = self.obpos, degree = degrees[i], imsize = self.res, counter = i + self.off, cm=self.ccm) 
 			bulb.bulb_image()
 		return(fmax,self.fps) #return the max frame index and framerate for the movie
 
 if __name__=='__main__':
-	movie = Cinematic(fps = 2.5, res = 1000)
+	movie = Cinematic(fps = 2.5, res = 100)
 	movie.stitch()

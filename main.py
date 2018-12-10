@@ -22,7 +22,7 @@ if __name__=='__main__':
 			print('\n\n :: Invalid color. Please choose from the given list. :: ')
 		else:
 			t0 = time.perf_counter()
-			movie = Cinematic(obpos = np.array([1,2,3]) , fps=2, movie_length = 2, res=200, ccm = a, deg_lims=[7,9])
+			movie = Cinematic(obpos = np.array([1,2,-3]) , fps=2, movie_length = 2, res=200, ccm = a, deg_lims=[7,9])
 			movie.stitch()
 			t = time.perf_counter() - t0
 			print(' :: Time Elapsed During Operation {}s :: '.format(int(t)))
