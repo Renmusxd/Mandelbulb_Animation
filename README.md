@@ -6,6 +6,8 @@ Can be used to generate animations and still frames of the Mandelbulb fractal.
 ![image](https://github.com/JTomI/Mandelbulb_Animation/blob/master/frames/frame10.png?raw=true)
 
 
+Below is the recursive Mandelbulb formula by Daniel White and Paul Nylander
+- https://en.wikipedia.org/wiki/Mandelbulb#frb-inline
 
 For more info on the fractal, see Refs: 
 - https://www.mandelbulb.com/about/
