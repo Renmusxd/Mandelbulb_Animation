@@ -1,5 +1,5 @@
 import os
-from bulb import Bulb
+from .bulb import Bulb
 from tqdm import tqdm
 import numpy as np
 import multiprocessing as mp

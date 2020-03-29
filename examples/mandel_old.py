@@ -1,7 +1,6 @@
 import numpy as np
 from numba import jit
 from tqdm import tqdm
-import time
 
 class Mandel(object):
 

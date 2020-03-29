@@ -1,9 +1,5 @@
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 from numba import jit
-from copy import copy
-from scipy import ndimage
 from tqdm import tqdm
 import scipy.misc
 
@@ -68,7 +64,7 @@ def trace(start, directions, max_steps, min_distance, iterations, degree, bailou
     total_distance = np.zeros(directions.shape[0])
     keep_iterations = np.ones_like(total_distance)
     steps = np.zeros_like(total_distance)
-    print('DistanceEstimator running')
+    print('distance_estimator running')
     for _ in tqdm(range(max_steps)):
         positions = start[np.newaxis, :] + total_distance[:, np.newaxis] * directions
         distance = DistanceEstimator(positions, iterations, degree, bailout)

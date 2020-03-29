@@ -1,6 +1,6 @@
 import time
-from film import Cinematic
-from bulb import Bulb
+from MandelBulb.film import Cinematic
+from MandelBulb.bulb import Bulb
 import os
 import numpy as np
 

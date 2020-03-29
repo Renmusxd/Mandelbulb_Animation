@@ -1,10 +1,6 @@
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 from numba import jit
-from copy import copy
 import scipy.misc
-from tqdm import tqdm
 
 class Bulb(object):
     '''Generate 2D array with colormap values for making png images of the 3D Mandelbulb. Save'''
