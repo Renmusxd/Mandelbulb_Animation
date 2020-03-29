@@ -2,15 +2,15 @@ import os
 from bulb import Bulb
 from tqdm import tqdm
 import numpy as np
+import multiprocessing as mp
+from joblib import Parallel, delayed
 
 class Cinematic(object):
 	'''Handles the making of movies from generated bulb frames.'''
-	def __init__(self,fps = 20, movie_length = 2, deg_lims = [2,8], obpos = np.array([0 , 0 , 3.]), res = 500 ,movie_name = 'Mandelmoves' , offset = 0 , cm = 'fiery',views = False, elipse = False, grad = False):
-		self.cm = cm
+	def __init__(self,fps = 20, movie_length = 2, deg_lims = [2,8], obpos = np.array([0 , 0 , 3.]), res = 500 ,movie_name = 'Mandelmoves' , offset = 0 , views = False, elipse = False):
 		self.fps = fps # change framerate
 		self.off = offset # give frame naming index an offset so don't rewrite good frames
 		self.res = res # movie resolution
-		self.grad = grad # logic of whether we want color gradient or not
 		self.views = views # Trace camera path along geodesic if true, else just go from obpos
 		self.movin = movie_name # saved filename
 		self.obpos = obpos # observer position
@@ -19,14 +19,15 @@ class Cinematic(object):
 		self.deg_star, self.deg_end = deg_lims # limits on power of recursive formula
 
 	def stitch(self):
-		'''Uses the ffmpeg terminal command to stitch together the png frames into a .mp4 movie file with given fps. Offset counter to adjust for cache'''
-		# directs to frames to be iterated over. %d is interpreted by ffmpeg along with -start_number
-		# this %d allows ffmpeg to iterated over sequential files in the /frames folder, and make a movie
-		self.gen_frames() # make frames at given fps
+		'''Uses the ffmpeg terminal command to stitch together the png frames into a .mp4 movie file with given fps. Offset counter to adjust for cached images.'''
+		
+		self.gen_frames() # make frames at given fps, store in /frames
 		input(' :: Check /frames to see generated frames :: \n :: Press <Enter> to Continue :: ')
 		cwd = os.getcwd()
 		location = cwd + '/frames/frame%d.png' 
-		# command output will be mp4 file at given fps. Suppress command line output (verbose command)
+		# directs to frames to be iterated over. %d is interpreted by ffmpeg along with -start_number
+		# this %d allows ffmpeg to iterate over sequential files in the /frames folder, and make a movie
+		# command output will be mp4 file at given fps. Command line output is suppressed. (Undo with verbose command option)
 		ffmpeg_cmd = "ffmpeg -r {} -start_number {} -i {} -vcodec mpeg4 {}.mp4".format(self.fps , self.off , location , self.movin)
 		os.system(ffmpeg_cmd) # make the movie
 		os.system('rm -R frames') # cleanup frames folder
@@ -45,25 +46,16 @@ class Cinematic(object):
 			# if you dont want a path, just use the observer position in each iteration
 			x,y,z = self.obpos[0] * np.ones(fmax),self.obpos[1] * np.ones(fmax), self.obpos[2] * np.ones(fmax)
 			self.path = np.vstack((x,y,z)).T
-		if self.grad: #if want a color gradient
-			color_map = self.gradient(fmax=fmax)
-			degrees = np.linspace(self.deg_star, self.deg_end, fmax) # apply number of frames to degrees
-			# make a new set of frames and dont overwrite frames you already have using offset
-			for i in tqdm(range(fmax), desc = ' :: Generating Frames :: '):
-				bulb = Bulb(observer_position = np.array(self.path[i]), degree = degrees[i], color_map = color_map[i], imsize = self.res, counter = i + self.off,grad = True) 
-				bulb.bulb_image()
-			return(fmax,self.fps) #return the max frame index and framerate for the movie (can be useful)
-		else:
-			degrees = np.linspace(self.deg_star, self.deg_end, fmax) # apply number of frames to degrees
-			# make a new set of frames and dont overwrite frames you already have using offset
-			for i in tqdm(range(fmax), desc = ' :: Generating Frames :: '):
-				bulb = Bulb(observer_position = np.array(self.path[i]), degree = degrees[i], cm = self.cm, imsize = self.res, counter = i + self.off) 
-				bulb.bulb_image()
-			return(fmax,self.fps) #return the max frame index and framerate for the movie (can be useful)
+
+		degrees = np.linspace(self.deg_star, self.deg_end, fmax) # apply number of frames to degrees
+		# make a new set of frames and dont overwrite frames you already have using offset
+		bulb = Bulb(imsize = self.res)
+		Parallel(n_jobs=mp.cpu_count())(delayed(bulb.bulb_image)(observer_position = np.array(self.path[i]),degree = degrees[i],counter = i + self.off) for i in tqdm(range(fmax), desc = ' :: Generating Frames :: '))
+		return(fmax,self.fps) #return the max frame index and framerate for the movie (can be useful)
 
 	def elipse(self, pts = 360):
 		'''Makes eliptical path between poles.'''
-		print(' :: Setting Up Eliptical Path :: ')
+		# print(' :: Setting Up Eliptical Path :: ')
 		theta = np.linspace(0, 2 * np.pi, pts)
 		# using equation for elipse in polar
 		a = 2.0 # major axis
@@ -75,26 +67,9 @@ class Cinematic(object):
 		path = np.vstack((x,y,z)).T # return point coordinates as rows
 		return(path)
 
-	def gradient(self, fmax=10):
-		""" Makes a gradient between the fiery and blue colormaps"""
-		# bulb = Bulb()
-		# maps = bulb.colordict()
-		fiery = [1/3,150,1,0,1/6,0]
-		blue = [1/6,0,0,20,1,0]
-		# fiery = maps['fiery']
-		# print(fiery)
-		# blue = maps['blue']
-		index = []
-		for i in range(fmax):
-			map_increment = list(range(6))
-			for k in range(6):
-				map_increment[k] = (1-i/fmax)*fiery[k] + (i/fmax)*blue[k]
-			index.append(map_increment)
-		return(index)
-
 	def viewer(self, pts = 1000 , loc = 9):
 		'''Sit at some views along a great circle while iterating.'''
-		print(' :: Setting Up View Points :: ')
+		# print(' :: Setting Up View Points :: ')
 		radius = 3.0
 		theta = np.linspace(0, 2 * np.pi, loc) # increment angle along path locations
 		x = np.zeros(pts) # to do this in polar, fix circle to y,z plane
@@ -108,6 +83,7 @@ class Cinematic(object):
 		return(path)
 
 if __name__=='__main__':
-	movie = Cinematic(res = 500, movie_length = 2, fps= 10, grad = True)
+	#Example of low res 2 second movie
+	movie = Cinematic(res = 100, movie_length = 2)
 	movie.stitch()
 	
