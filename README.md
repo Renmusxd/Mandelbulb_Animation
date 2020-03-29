@@ -3,7 +3,7 @@ The repository for all code associated with physics 129 project.  --Authors Joey
 
 Can be used to generate animations and still frames of the Mandelbulb fractal.
 
-![image](https://github.com/JTomI/Mandelbulb_Animation/blob/master/frames/frame10.png?raw=true)
+![image](https://github.com/JTomI/Mandelbulb_Animation/blob/master/MandelBulb/Development/frames_cache/frame10.png)
 
 
 Below is the recursive Mandelbulb formula by Daniel White and Paul Nylander
